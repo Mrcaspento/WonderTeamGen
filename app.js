@@ -31,6 +31,35 @@ class App {
                 name: "id"
             }
         ];
+
+        this.engineerPrompt = this.employeePrompt.concat([
+            {
+                type: "input",
+                message: "Whar is your github?",
+                name: "github"
+            }
+        ]);
+
+        this.internPrompt = this.employeePrompt.concat([
+            {
+                type: "input",
+                message: "What school do you go to?",
+                name: "school"
+            }
+        ]);
+
+        this.managerPrompt = this.employeePrompt.concat([
+            {
+                type:"input",
+                message: "what is your office number?",
+                name: "officeNumber"
+            }
+        ]);
+
+
+
+
+
     }
 }
 // After the user has input all employees desired, call the `render` function (required

@@ -1,11 +1,11 @@
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-const Employee = require("./lib/Employee")
+
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
-const { OutgoingMessage } = require("http");
+const render = require('./lib/htmlRenderer');
 
 const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
@@ -15,7 +15,22 @@ let teamArray = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-addManager();
+function startTeam() {
+    inquirer.prompt([
+        {
+            type:"input",
+            message: "Come up with a Name you're employees will hate",
+            name: "teamName"
+        }
+    ])
+        .then(function(data){
+            const teamName = data.teamName
+            teamArray.push(teamName)
+            addManager();
+        })
+
+    
+}
 function addManager() {
     inquirer.prompt([
         {
@@ -39,12 +54,8 @@ function addManager() {
             name: "officeNumber"
         }
     ]).then(function (data) {
-        const name = data.name;
-        const id = 420;
-        const email = data.email;
-        const officeNumber = data.officeNumber;
-        const teamMember = new Manager(name, id, email, officeNumber);
-        teamArray.push(teamMember);
+       const manager = new Manager(data.name, data.id, data.email, data.officeNumber)
+        teamArray.push(manager);
         addTeamMembers();
     });
 }
@@ -55,10 +66,10 @@ function addTeamMembers(data) {
             type: "list",
             message: "Who would you like to work to death?",
             choices: ["A hopless Intern", "A suspicous Engineer", "None because you're broke"],
-            name: "addCoworker"//addmemberdata
+            name: "addTeamData"
         }
     ]).then(function (data) {
-        switch (data.addCoWorker) {
+        switch (data.addTeamData) {
             case "A hopless Intern":
                 addIntern();
                 break;
@@ -66,7 +77,7 @@ function addTeamMembers(data) {
                 addEngineer();
                 break;
             case "None because you're broke":
-                completeTeam();
+                teamDone();
                 break;
         }
 
@@ -97,12 +108,9 @@ function addIntern() {
     ])
 
         .then(function (data) {
-            const name = data.name
-            const id = finalTeamArray.length + 1
-            const email = data.email
-            const school = data.school
-            const teamMember = new Intern(name, id, email, school)
-            teamArray.push(teamMember)
+           
+            const intern = new Intern(data.name, data.id, data.email, data.school)
+            teamArray.push(intern)
             addTeamMembers()
         });
 };
@@ -131,12 +139,8 @@ function addEngineer() {
     ])
 
         .then(function (data) {
-            const name = data.name
-            const id = finalTeamArray.length + 1
-            const email = data.email
-            const github = data.github
-            const teamMember = new Engineer(name, id, email, github)
-            teamArray.push(teamMember)
+            const engineer = new Engineer(data.name, data.id, data.email, data.github)
+            teamArray.push(engineer)
             addTeamMembers()
         });
 };
@@ -147,6 +151,7 @@ function teamDone(){
     }fs.writeFileSync(outputPath, render(teamArray), "utf-8");
 }
 
+startTeam();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will

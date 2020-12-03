@@ -1,7 +1,7 @@
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
-
+const Employee = require("./lib/Employee")
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
@@ -18,18 +18,18 @@ let teamArray = [];
 function startTeam() {
     inquirer.prompt([
         {
-            type:"input",
+            type: "input",
             message: "Come up with a Name you're employees will hate",
             name: "teamName"
         }
     ])
-        .then(function(data){
+        .then(function (data) {
             const teamName = data.teamName
             teamArray.push(teamName)
             addManager();
         })
 
-    
+
 }
 function addManager() {
     inquirer.prompt([
@@ -46,19 +46,14 @@ function addManager() {
             type: "input",
             message: "What is your team manager's email address?",
             name: "email"
-        },{
-            type: "input",
-            message: "What is your role?",
-            name: "role"
         },
-
         {
             type: "number",
             message: "What is your team manager's office number?",
             name: "officeNumber"
         }
     ]).then(function (data) {
-       const manager = new Manager(data.name, data.id, data.role, data.email, data.officeNumber)
+        let manager = new Manager(data.name, data.id, data.email, data.officeNumber)
         teamArray.push(manager);
         addTeamMembers();
     });
@@ -81,9 +76,10 @@ function addTeamMembers() {
                 addEngineer();
                 break;
             case "None because you're broke":
-                teamDone();
+                teamDone;
                 break;
         }
+        ;
 
     })
 }
@@ -98,10 +94,6 @@ function addIntern() {
             type: "input",
             message: "What is your id?",
             name: "id"
-        },{
-            type: "input",
-            message: "What is your role?",
-            name: "role"
         },
         {
             type: "input",
@@ -116,8 +108,7 @@ function addIntern() {
     ])
 
         .then(function (data) {
-           
-            const intern = new Intern(data.name, data.role, data.id, data.email, data.school)
+            let intern = new Intern(data.name, data.id, data.email, data.school)
             teamArray.push(intern)
             addTeamMembers()
         });
@@ -133,7 +124,7 @@ function addEngineer() {
             type: "input",
             message: "What is your id?",
             name: "id"
-        },{
+        }, {
             type: "input",
             message: "What is your role?",
             name: "role"
@@ -151,19 +142,25 @@ function addEngineer() {
     ])
 
         .then(function (data) {
-            const engineer = new Engineer(data.name, data.id, data.role, data.email, data.github)
+            let engineer = new Engineer(data.name, data.id, data.email, data.github)
             teamArray.push(engineer)
             addTeamMembers()
         });
 };
 
-function teamDone(){
-    if(!fs.existsSync(OUTPUT_DIR)){
-        fs.mkdirSync(OUTPUT_DIR)
-    }fs.writeFileSync(outputPath, render(teamArray), "utf-8");
+function teamDone() {
+    var html = render(teamArray);
+    if (!fs.existsSync(OUTPUT_DIR)) {
+        fs.mkdir(path.join(__dirname, 'output'), {}, function (err) {
+            if (err) throw (err);
+        })
+    } else {
+        fs.writeFile(outputPath, html, (err) => {
+            if (err) throw (err);
+        })
+    }
 }
-
-startTeam();
+        startTeam();
 
 // After the user has input all employees desired, call the `render` function (required
 // above) and pass in an array containing all employee objects; the `render` function will
